@@ -29,6 +29,15 @@ class Car:
         self.driftAngle = 0
         self.crashed = False
 
+        diagRadius = math.atan(self.height/self.width) #in radians
+        self.diagSin = math.sin(diagRadius);
+        self.diagCos = math.cos(diagRadius);
+
+        self.radius = math.sqrt(self.width*self.width + self.height*self.height)
+
+        self.sight = 400
+        self.center = None
+
         self.xVel = 0
         self.yVel = 0
     @property
@@ -93,12 +102,75 @@ class Car:
 
         
     def visionPoints(self, road):
-        pass
+        #current COS & SIN
+        sin = math.sin(math.radians(self.angle))
+        cos = math.cos(math.radians(self.angle))
+        self.center = (self.x + self.diagCos * self.radius,self.y + self.diagSin * self.radius)
+        center = self.center
+        
+        sinFront = math.sin(math.radians(self.angle - 90))
+        cosFront = math.cos(math.radians(self.angle - 90))
+        sinMidRight = math.sin(math.radians(self.angle - 45))
+        cosMidRight = math.cos(math.radians(self.angle - 45))
+        sinMidLeft = math.sin(math.radians(self.angle + 45))
+        cosMidLeft = math.cos(math.radians(self.angle + 45))
+        sinMidMidRight = math.sin(math.radians(self.angle - 67.5))
+        cosMidMidRight = math.cos(math.radians(self.angle - 67.5))
+        sinMidMidLeft = math.sin(math.radians(self.angle + 67.5))
+        cosMidMidLeft = math.cos(math.radians(self.angle + 67.5))
+
+        frontPoint = (center[0] + self.sight * cosFront, center[1] + self.sight * sinFront)
+        backPoint = (center[0] - self.sight * cosFront, center[1] - self.sight * sinFront)
+        rightPoint = (center[0] + self.sight * cos, center[1] + self.sight * sin)
+        leftPoint = (center[0] -self. sight * cos, center[1] - self.sight*sin)
+        midRightPoint = (center[0] + self.sight * cosMidRight, center[1] + self.sight * sinMidRight)
+        midLeftPoint = (center[0] - self.sight * cosMidLeft, center[1] - self.sight * sinMidLeft)
+        midMidRightPoint = (center[0] + self.sight * cosMidMidRight, center[1] + self.sight * sinMidMidRight)
+        midMidLeftPoint = (center[0] - self.sight * cosMidMidLeft, center[1] - self.sight * sinMidMidLeft)
+
+        vision = [frontPoint, rightPoint, backPoint, leftPoint, midRightPoint, midLeftPoint, midMidRightPoint, midMidLeftPoint]
+
+        for points in road:#2 sets of points...inner,outter
+            for i in range(len(points)):
+                for x, v in enumerate(vision):
+                    intersect = self.cross(
+                        points[i-1],
+                        points[i],
+                        center,
+                        v
+                    )
+                    if intersect:
+                        vision[x] = intersect
+
+
+        return vision
     def visionDistance(self, road):
         pass
 
     def cross(self, a1, a2, b1, b2):
-        pass
+        #vectA = a2 - a1
+        r = a2[0] - a1[0], a2[1] - a1[1]
+        s = b2[0] - b1[0], b2[1] - b1[1]
+
+        """
+        a2 = a1 + r
+        a1 + t*r = b1 + u*s ... / scalar s
+        (a1 x s) + t*(r x s) = (b1 x s) + u*(s x s) ... # s x s = 0
+        (a1 x s) + t*(r x s) = (b1 x s) ... / (a1 x s)
+        t*(r x s) = ((b1 - a1) x s) ... / (r x s)
+        t = ((b1 - a1) x s) / (r x s)
+        """
+        t = u = None
+        if scalar(r, s) != 0:
+            t = scalar( sub(b1, a1)  , s) / scalar(r, s)
+        if scalar(s, r) != 0:   
+            u = scalar( sub(a1, b1)  , r) / scalar(s, r)
+
+        if t is not None and 0 <= t <= 1 and u is not None and 0 <= u <= 1:
+            x = a1[0] + r[0]*t
+            y = a1[1] + r[1]*t
+            return (x, y)
+        return False
 
 
     def collides(self,road):
