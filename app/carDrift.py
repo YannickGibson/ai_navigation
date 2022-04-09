@@ -19,10 +19,10 @@ def add(p1, p2):
     return (p1[0] + p2[0], p1[1] + p2[1])
 class Car:
     def __init__(self, x, y, angl):
-        self.x = int(x)
-        self.y = int(y)
-        self.width = IMG.get_size()[0]/2
-        self.height = IMG.get_size()[1]/2
+        self.width = CAR_IMG.get_size()[0]/2
+        self.height = CAR_IMG.get_size()[1]/2
+        self.x = int(x) - self.width /2
+        self.y = int(y) - self.height/2
         self.speed = 0
         self.acc = 0
         self.__angle = angl
@@ -146,6 +146,37 @@ class Car:
         return vision
     def visionDistance(self, road):
         pass
+    
+    def getVertices(self):
+        center = (self.x + self.diagCos * self.radius,self.y + self.diagSin * self.radius)
+
+        vect = sub(center, (self.x, self.y) ) # vector from top left to center
+
+        vectTL = sub((self.x,self.y), center) # vect from center to Top Left not rotated
+        vectTR = (vect[0], -vect[1])
+        vectBR = vect
+        vectBL = (-vect[0], vect[1])
+        
+
+        #current COS & SIN
+        s = math.sin(math.radians(self.__angle))
+        c = math.cos(math.radians(self.__angle))
+
+        # rotate point
+        newTL = (vectTL[0] * c - vectTL[1] * s, vectTL[0] * s + vectTL[1] * c)
+        newTR = (vectTR[0] * c - vectTR[1] * s, vectTR[0] * s + vectTR[1] * c)
+        newBR = (vectBR[0] * c - vectBR[1] * s, vectBR[0] * s + vectBR[1] * c)
+        newBL = (vectBL[0] * c - vectBL[1] * s, vectBL[0] * s + vectBL[1] * c)
+        
+        # translate point relevant to car position
+        topLeft = add(newTL, center)
+        topRight = add(newTR, center)
+        bottomLeft = add(newBL, center)
+        bottomRight = add(newBR, center)
+
+
+        return (topLeft, topRight, bottomRight, bottomLeft)
+
 
     def cross(self, a1, a2, b1, b2):
         #vectA = a2 - a1
@@ -174,5 +205,24 @@ class Car:
 
 
     def collides(self,road):
-        pass
+        vertices = self.getVertices()
+        for points in road:
+            for i in range(len(points)):
+                for k in range(len(vertices)):
+                    if self.cross(
+                            points[i-1],
+                            points[i],
+                            vertices[k-1],
+                            vertices[k]
+                        ):
+
+                        # Todo: collisions maybe
+                        """ self.speed /= -0.8
+                        #self.acc *= -1 we change that from outside
+                        self.xVel /= -0.93
+                        self.yVel /= -0.93 
+                        self.x += self.xVel
+                        self.y += self.yVel """
+                        return True
+
 
