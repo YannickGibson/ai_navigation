@@ -4,7 +4,7 @@ from simulation import AiSimulation
 
 if __name__ == "__main__":
     conf = {
-        "road_index": 1,
+        "road_index": 2,
         "show_active_fitness_lines": True,
         "show_car_vision": False,
         "show_all_fitness_lines": False,
