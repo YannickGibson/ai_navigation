@@ -1,14 +1,15 @@
-import pygame
 import os
 import math
-CAR_IMG = pygame.image.load(os.path.join("src\\img", "car.png" ))
-GHOST_IMG = pygame.image.load(os.path.join("src\\img", "ball.png" ))
+import sys
+import pygame
+CAR_IMG   = pygame.image.load("app\\utils\\img\\car.png")
+GHOST_IMG = pygame.image.load("app\\utils\\img\\ball.png")
 IMG = GHOST_IMG
 MAX_SPEED = .5
 
 def scalar(vect1, vect2):
     return (vect1[0] * vect2[1]) - (vect1[1] * vect2[0])
-def sub(p1, p2):
+def sub(p1, p2):    
     return (p1[0] - p2[0], p1[1] - p2[1])
 def div(p1, p2):
     if p2[1] == 0: return 0
@@ -28,7 +29,7 @@ def lerp(a, b, p):
 from enum import Enum 
 RotatingState = Enum("RotatingState", "calm left right")
 class Car:
-    def __init__(self, x, y, angl):
+    def __init__(self, x, y, angle):
         self._width = CAR_IMG.get_size()[0]/2
         self._height = CAR_IMG.get_size()[1]/2
         self._x = int(x) - self._width /2
@@ -36,7 +37,7 @@ class Car:
         self.speed = 0
         self.acc = 0
         self.drift_angle = 0
-        self.__angle = angl
+        self.__angle = angle
         self._crashed = False
         self.rotating_state = RotatingState.calm
 
@@ -106,7 +107,7 @@ class Car:
         if self.drift_angle == 0: dir = 0
         elif self.drift_angle > 0: dir = 1
         else: dir = -1
-        self.angle += self.drift_angle * self.speed * -0.1 * 14.5 + self.speed * -0.1 * 2.5 * dir
+        self.angle += self.drift_angle * self.speed * -0.1 * 4.5# * self.speed * -0.1 * 2.5 * dir
 
         self._x += self.x_vel*0.79
         self._y += self.y_vel*0.79
@@ -253,7 +254,7 @@ class Car:
         return False
 
 
-    def collides(self,road):
+    def collides(self, road):
         vertices = self.getVertices()
         for points in road:
             for i in range(len(points)):
@@ -273,5 +274,7 @@ class Car:
                         self.x += self.xVel
                         self.y += self.yVel """
                         return True
+        return False
+        
 
 

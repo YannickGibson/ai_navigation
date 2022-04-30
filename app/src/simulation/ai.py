@@ -1,157 +1,11 @@
+
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-from abc import abstractmethod
-from car import Car, add, sub, normalize
+from app.src.car.car import Car
 import pickle
-import math
 import pygame
-
-
-#WIN_WIDTH = 1540
-#WIN_HEIGHT = 750
-pygame.font.init()
-STAT_FONT = pygame.font.SysFont("comicsans", 50)
-class Simulation:
-    FRAMERATE = 60
-    MAX_FRAMES_PASSED = 250
-    def _load_road(self):
-        # load road
-        with open(f"src/pickles/roads/road{self.road_index}.pickle","rb") as f:
-            self.road = pickle.load(f)
-
-    def _load_fitness(self):
-        # load fitness lines
-        with open(f"src/pickles/fitness/fitnessLines{self.road_index}.pickle","rb") as f:
-            self.fitness_lines = pickle.load(f)
-            
-    def __init__(self, road_index):
-        self.road_index = road_index
-        self.rotation = 0
-        self.run_flag = False
-        pygame.init()
-
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,30) # gives us the top bar
-
-        self.current_w, self.current_h = pygame.display.Info().current_w, pygame.display.Info().current_h
-
-        self._load_fitness()
-        self._load_road()
-
-        self._set_spawn()
-        self.car = Car(*self.spawn_point, self.spawn_deg)
-
-    def _set_spawn(self):
-        diff1 = sub(*self.fitness_lines[0])
-        diff2 = sub(*self.fitness_lines[-1])
-        c1 = sub(self.fitness_lines[0][0], (diff1[0]/2, diff1[1]/2)) # center of first fit line
-        c2 = sub(self.fitness_lines[-1][0], (diff2[0]/2, diff2[1]/2)) # center of last fit line
-        diff3 = sub(c1, c2)
-        spawnPoint = sub(c1, (diff3[0]/2, diff3[1]/2)) # middle of the two center
-
-        self.spawn_point = (int(spawnPoint[0]), int(spawnPoint[1])) 
-
-        spawnRadians = math.atan2(c2[1]-c1[1], c2[0]-c1[0])
-        self.spawn_deg = math.degrees(spawnRadians) - 90
-
-    def _register_keys(self, event) -> bool:
-        if event.type == pygame.QUIT:
-            self.run_flag = True
-            pygame.quit()
-            return True
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-                self.rotation = 0
-            elif event.key == pygame.K_d:
-                self.rotation = 0
-            elif event.key == pygame.K_w:
-                self.car.acc = 0
-            elif event.key == pygame.K_s:
-                self.car.acc = 0
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
-                self.rotation = -5
-            elif event.key == pygame.K_d:
-                self.rotation = 5
-            elif event.key == pygame.K_w:
-                self.car.acc = 1
-            elif event.key == pygame.K_s:
-                self.car.acc = -1
-
-        return False
-    def run(self):
-        self.win = pygame.display.set_mode((self.current_w, self.current_h))
-        clock = pygame.time.Clock()
-        while True:
-            clock.tick(Simulation.FRAMERATE)
-            for event in pygame.event.get():
-                if (self._register_keys(event)):
-                    return self.run_flag # exited correctly
-                    
-            if self._tick(): # implement this
-                return self.run_flag # something has happened
-
-            self._draw()
-    @abstractmethod
-    def _draw():
-        raise NotImplementedError("Please Implement this method")
-    @abstractmethod
-    def _tick():
-         raise NotImplementedError("Please Implement this method")
-
-class TestSimulation(Simulation):
-    def __init__(self, road_index):
-        super().__init__(road_index)
-    def _draw(self):
-        #background
-        if self.car.collides(self.road):
-            self.win.fill((255,0,0))
-        else:
-            self.win.fill((0,0,0))
-        
-        # road
-        pygame.draw.polygon(self.win, (255,255,255), self.road[0] + self.road[1])
-        
-        #fitness lines
-        for points in self.fitness_lines:
-            pygame.draw.aaline(self.win, (0,255,0), points[0],points[1],5 )
-
-        # car
-        #self.car.draw_shadow(self.win, (255,0,200))
-
-        pygame.draw.polygon(self.win,(0,0,255),self.car.getVertices())#collider
-
-        # info
-        text = STAT_FONT.render("Angle: " + str(round(self.car.angle,2)) , 1, (255,255,255))
-        self.win.blit(text,(self.current_w - 10 - text.get_width(), 10))
-        text = STAT_FONT.render("drift_angle: " + str(round(self.car.drift_angle,2)) , 1, (255,255,255))
-        self.win.blit(text,(self.current_w - 10 - text.get_width(), 10 + text.get_height()))
-
-        # vision 
-        for p in self.car.get_vision(self.road):
-            intersect_point = (int(p[0]), int(p[1]))
-            diff = sub(intersect_point, self.car._center)
-            offset_center = add(normalize(diff, scale=20), self.car._center)
-            pygame.draw.aaline(self.win, (0,128,128), offset_center, intersect_point)
-            
-            pygame.draw.circle(self.win,(0,0,255), (int(p[0]), int(p[1])),5)
-        
-        pygame.display.update()
-    
-
-    def _tick(self):
-        self.car.rotate_by(self.rotation)
-        self.car.move()
-
-
-
-
-
-
-
-
-import neat
+from app.src.simulation.base import Simulation, STAT_FONT
+import neat as neat
 import time
 import pickle
 
@@ -167,6 +21,9 @@ class AiSimulation(Simulation):
             show_parent = True,
             save_best_genome = False,
             reverse_fitness_lines = False,
+            let_me_drive = False,
+            max_frames_elapsed = 400,
+            no_progress_frames_elapsed = 50,
             ):
         self.show_active_fitness_lines = show_active_fitness_lines
         self.show_car_vision = show_car_vision
@@ -179,9 +36,14 @@ class AiSimulation(Simulation):
         self.population = None
         self.prev_best_genome = None
         self.reverse_fitness_lines = reverse_fitness_lines
+        self.let_me_drive = let_me_drive
+        self.max_frames_elapsed = max_frames_elapsed
+        self.no_progress_frames_elapsed = no_progress_frames_elapsed
 
+        self.no_fitness_crossed_for = 0
+        self.fitness_crossed = False
 
-        super().__init__(road_index)
+        super().__init__(road_index, self.let_me_drive)
 
     def _load_fitness(self):
         super()._load_fitness()
@@ -190,7 +52,7 @@ class AiSimulation(Simulation):
 
     def _draw(self):
 
-        if self.car.collides(self.road):
+        if self.let_me_drive == True and self.car.collides(self.road):
             self.win.fill((200,50,50))
         else:
             self.win.fill((0,0,0))
@@ -210,7 +72,7 @@ class AiSimulation(Simulation):
 
             if self.show_car_vision:
                 for p in car.get_vision(self.road):
-                    pygame.draw.aaline(self.win, (255,0,255),car.center, (int(p[0]),int(p[1])),1)
+                    pygame.draw.aaline(self.win, (255,0,255), car.center, (int(p[0]),int(p[1])),1)
                     pygame.draw.circle(self.win,(0,25,255),(int(p[0]),int(p[1])),3) 
                     
             if self.show_parent and self.population.best_genome == self.ge[i]:
@@ -219,12 +81,18 @@ class AiSimulation(Simulation):
                 car.draw(self.win)
             
 
-        self.car.draw_shadow(self.win,(0,0,255))
+        if self.let_me_drive == True: 
+            if self.show_car_vision:
+                for p in self.car.get_vision(self.road):
+                    pygame.draw.aaline(self.win, (255,0,255), self.car.center, (int(p[0]),int(p[1])),1)
+                    pygame.draw.circle(self.win,(0,25,255),(int(p[0]),int(p[1])),3) 
+            self.car.draw_shadow(self.win,(0,0,255))
+
 
         #info
         text = STAT_FONT.render("Car count: " + str(len(self.cars)) , 1, (255,255,255))
         self.win.blit(text,(self.current_w - 10 - text.get_width(), 10))
-        text = STAT_FONT.render("Frames passed: {}".format(self.frames_passed), 1, (255,255,255))
+        text = STAT_FONT.render("{} F".format(self.frames_passed), 1, (255,255,255))
         self.win.blit(text,(self.current_w - 10 - text.get_width(), text.get_height() + 20))
         text = STAT_FONT.render("Gen: " + str(self.gen_num), 1, (255,255,255))
         self.win.blit(text,(10, 10))
@@ -307,6 +175,7 @@ class AiSimulation(Simulation):
         front_line = self.fitness_lines[self.fit_indexes[i]] # check if crossing fitness_lines in direction of the race
         back_line = self.fitness_lines[ self.fit_indexes[i] - 4 ] # check if going back
         if car.collide_fitness(front_line[0], front_line[1]):
+            self.fitness_crossed = True
             self.ge[i].fitness += 0.1
             pygame.draw.line(self.win,(255,0,250), *front_line,10)
             self.fit_indexes[i] += 1
@@ -318,8 +187,10 @@ class AiSimulation(Simulation):
 
     def _tick(self):
 
-        self.car.rotate_by(self.rotation) 
-        self.car.move()
+        if self.let_me_drive == True:
+            self.car.rotate_by(self.rotation) 
+            self.car.move()
+        self.fitness_crossed = False
         for i, car in enumerate(self.cars):
 
             if car.collides(self.road):
@@ -328,11 +199,19 @@ class AiSimulation(Simulation):
                 del self.ge[i]
                 del self.fit_indexes[i]
                 continue
-                    
+               
             self._think(car, i)
 
-        if len(self.cars) <= 0 or self.frames_passed > Simulation.MAX_FRAMES_PASSED:
-            return True
+        if self.fitness_crossed:
+            self.no_fitness_crossed_for = 0
+        else:
+            self.no_fitness_crossed_for += 1
+            if self.no_fitness_crossed_for > self.no_progress_frames_elapsed:
+                self.no_fitness_crossed_for = 0
+                return True # new gen
+
+        if len(self.cars) <= 0 or self.frames_passed > self.max_frames_elapsed:
+            return True # new gen
 
         self.frames_passed += 1
         return False
@@ -340,8 +219,7 @@ class AiSimulation(Simulation):
     def run(self):
         self.win = pygame.display.set_mode((self.current_w, self.current_h))
 
-        local_dir = os.path.dirname(__file__)
-        config_path = os.path.join(local_dir, "../src/config-feedforward.txt")
+        config_path = "app/utils/config-feedforward.txt"
 
         config = neat.Config(
             neat.DefaultGenome,
@@ -360,15 +238,15 @@ class AiSimulation(Simulation):
             best_genome = p.run(self._iterate_ai, n=10000)# num of generations
         except ExitSimulationException:
             pass
-        if self.save_best_genome: self.save_genome(best_genome)
+        if self.save_best_genome: self.save_genome(self.prev_best_genome)
         return False
 
-    def save_genome(genome):
+    def save_genome(self, genome):
         i = 0
-        while os.path.exists("src/pickles/genomes_drift/dgenome{}.pickle".format(i)):
+        while os.path.exists("../src/pickles/genomes/genome{}.pickle".format(i)):
             i += 1
-        
-        with open("src/pickles/genomes_drift/dgenome{}.pickle".format(i), "wb") as f:
+        local_dir = os.path.dirname(__file__)
+        with open(os.path.join(local_dir, "../src/pickles/genomes/genome{}.pickle".format(i)), "wb") as f:
             pickle.dump(genome, f)
             print("Genome pickle saved")
 
