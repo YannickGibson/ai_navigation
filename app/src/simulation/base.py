@@ -83,6 +83,7 @@ class Simulation:
                     self.car.acc = -1
 
         return False
+
     def run(self):
         self.win = pygame.display.set_mode((self.current_w, self.current_h))
         clock = pygame.time.Clock()

@@ -216,7 +216,7 @@ class AiSimulation(Simulation):
         self.frames_passed += 1
         return False
 
-    def run(self):
+    def run(self, n = 10000):
         self.win = pygame.display.set_mode((self.current_w, self.current_h))
 
         config_path = "app/utils/config-feedforward.txt"
@@ -235,18 +235,18 @@ class AiSimulation(Simulation):
         #p.add_reporter(neat.StatisticsReporter())
 
         try:
-            best_genome = p.run(self._iterate_ai, n=10000)# num of generations
+            #self.save_best_genome
+            p.run(self._iterate_ai, n=n)# num of generations
         except ExitSimulationException:
             pass
-        if self.save_best_genome: self.save_genome(self.prev_best_genome)
+        if self.prev_best_genome: self.save_genome(self.prev_best_genome)
         return False
 
     def save_genome(self, genome):
         i = 0
-        while os.path.exists("../src/pickles/genomes/genome{}.pickle".format(i)):
+        while os.path.exists("app\\utils\\pickles\\genomes\\genome{}.pickle".format(i)):
             i += 1
-        local_dir = os.path.dirname(__file__)
-        with open(os.path.join(local_dir, "../src/pickles/genomes/genome{}.pickle".format(i)), "wb") as f:
+        with open("app\\utils\\pickles\\genomes\\genome{}.pickle".format(i), "wb") as f:
             pickle.dump(genome, f)
             print("Genome pickle saved")
 

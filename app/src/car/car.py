@@ -12,7 +12,9 @@ def scalar(vect1, vect2):
 def sub(p1, p2):    
     return (p1[0] - p2[0], p1[1] - p2[1])
 def div(p1, p2):
-    if p2[1] == 0: return 0
+    if p2[0] == 0 and p2[1] == 0: return (0, 0)
+    if p2[0] == 0 : return (0, p1[1] / p2[1])
+    if p2[1] == 0 : return (p1[0] / p2[0], 0)
     return (p1[0] / p2[0], p1[1] / p2[1])
 def mult(p1, p2):
     return (p1[0] * p2[0], p1[1] * p2[1])
@@ -22,6 +24,7 @@ def norm(x):
     return math.sqrt(x[0]**2 + x[1]**2)
 def normalize(x, scale):
     n = norm(x)
+    if n == 0: return (0, 0)
     return (x[0]/n * scale, x[1]/n * scale)
 def lerp(a, b, p):
     return a + p*(b-a)

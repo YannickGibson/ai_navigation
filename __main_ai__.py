@@ -17,6 +17,6 @@ if __name__ == "__main__":
 
     }
     ai_simulation = AiSimulation(**conf)
-    ai_simulation.run();
+    ai_simulation.run()
     
 
