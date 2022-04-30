@@ -40,28 +40,28 @@ Program can be launched:
 - as an AI simulation `__main_ai__.py`
 - as a movement simulation `__main_movement__.py`
   
-# AI Config
-**road_index**
-        -    index of road pre-saved as a `pickle` 
-**show_active_fitness_lines** 
-        - shows where is the agent currently earning fitness
-**show_car_vision** 
-        - shows how far is the wall (main information inputed into net)
-**show_all_fitness_lines** 
-        - shows where all the *fitness lines*
-**show_parent** 
-        - highlights most prominent genome (doesn't guarantee reproduction)
-**save_best_genome** 
-        - saves the most prominent genome as a `pickle` to `utils/genomes` directory 
-**reverse_fitness_lines** 
-        - makes agents compete in the opposite direction 
-**let_me_drive** 
-        - allows user to try what it feels like to be an agent
-**max_frames_elapsed** 
-        - determines after how many frames will simulation start a new generation
-**no_progress_frames_elapsed** 
-        - determines after how many frames of agents not crossing *fitness lines* in the forward direction will the simulation start a new generation
+# AI Config 
 
+- *road_index*
+        - index of road pre-saved as a `pickle` 
+- *show_active_fitness_lines* 
+        - shows where is the agent currently earning fitness
+- *show_car_vision* 
+        - shows how far is the wall (main information inputed into net)
+- *show_all_fitness_lines* 
+        - shows where all the *fitness lines*
+- *show_parent* 
+        - highlights most prominent genome (doesn't guarantee reproduction)
+- *save_best_genome* 
+        - saves the most prominent genome as a `pickle` to `utils/genomes` directory 
+- *reverse_fitness_lines* 
+        - makes agents compete in the opposite direction 
+- *let_me_drive* 
+        - allows user to try what it feels like to be an agent
+- *max_frames_elapsed* 
+        - determines after how many frames will simulation start a new generation
+- *no_progress_frames_elapsed* 
+        - determines after how many frames of agents not crossing *fitness lines* in the forward direction will the simulation start a new generation
 
 ## Tests
 Unit-tests are checking the core functionality of the program, tests run on majority of functions and methods. Tests can be run with the `pytest` command.
