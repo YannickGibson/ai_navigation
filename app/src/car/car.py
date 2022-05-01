@@ -45,8 +45,8 @@ class Car:
         self.rotating_state = RotatingState.calm
 
         diag_radius = math.atan(self._height/self._width) #in radians
-        self._diag_sin = math.sin(diag_radius);
-        self._diag_cos = math.cos(diag_radius);
+        self._diag_sin = math.sin(diag_radius)
+        self._diag_cos = math.cos(diag_radius)
 
         self.diagonal = norm((self._width, self._height))
 
@@ -195,7 +195,6 @@ class Car:
             vect = sub(self._center, p)
             d = norm(vect)
             distances.append(round(d))
-
         return distances
     
     def getVertices(self):
@@ -213,13 +212,13 @@ class Car:
         s = math.sin(math.radians(self.__angle))
         c = math.cos(math.radians(self.__angle))
 
-        # rotate point
+        # rotate vector
         new_tl = (vect_tl[0] * c - vect_tl[1] * s, vect_tl[0] * s + vect_tl[1] * c)
         new_tr = (vect_tr[0] * c - vect_tr[1] * s, vect_tr[0] * s + vect_tr[1] * c)
         new_bl = (vect_bl[0] * c - vect_bl[1] * s, vect_bl[0] * s + vect_bl[1] * c)
         new_br = (vect_br[0] * c - vect_br[1] * s, vect_br[0] * s + vect_br[1] * c)
         
-        # translate point relevant to car position
+        # add the vector to center
         top_left = add(new_tl, center)
         top_right = add(new_tr, center)
         bottom_left = add(new_bl, center)

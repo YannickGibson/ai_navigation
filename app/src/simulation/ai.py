@@ -31,7 +31,7 @@ class AiSimulation(Simulation):
         self.show_parent = show_parent
         self.save_best_genome = save_best_genome
         self.gen_num = 0
-        self.rotation = 0;
+        self.rotation = 0
         self.champion_not_beaten_n = 0
         self.population = None
         self.prev_best_genome = None
