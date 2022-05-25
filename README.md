@@ -28,7 +28,7 @@ pip install -r .\requirements.txt
 A user can freely control an unit if the program is run from `__main_movement__.py` else if the program is run from `__main_ai__.py` you need to make sure that the config value `let_me_drive` is set to  `True`
   
 Run the program from the root directory, e.g.:
-```ps1 
+```ps1
 python __main_ai__.py
 ```
 
