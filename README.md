@@ -54,7 +54,7 @@ Program can be launched:
         - highlights most prominent genome (doesn't guarantee reproduction)
 - *save_best_genome* 
         - saves the most prominent genome as a `pickle` to `utils/genomes` directory 
-- *reverse_fitness_lines* 
+- *reverse_fitness_lines*
         - makes agents compete in the opposite direction 
 - *let_me_drive* 
         - allows user to try what it feels like to be an agent
