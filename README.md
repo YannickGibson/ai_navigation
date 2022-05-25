@@ -44,7 +44,7 @@ Program can be launched:
 
 - *road_index*
         - index of road pre-saved as a `pickle` 
-- *show_active_fitness_lines* 
+- *show_active_fitness_lines*
         - shows where is the agent currently earning fitness
 - *show_car_vision* 
         - shows how far is the wall (main information inputed into net)
