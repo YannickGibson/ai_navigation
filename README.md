@@ -1,4 +1,4 @@
-# AI Bug Race
+# AI Navigation
 
 ## Overview
 A simulation of a race game using natural selection algorithm *NeuroEvolution of Augmented Topologies*, **NEAT** in short.
@@ -65,3 +65,20 @@ Program can be launched:
 
 ## Tests
 Unit-tests are checking the core functionality of the program, tests run on majority of functions and methods. Tests can be run with the `pytest` command.
+
+## Demonstration
+### Learning
+
+https://user-images.githubusercontent.com/57909721/221156472-658bc087-ec96-46c6-9bbf-49ac21720dda.mp4
+
+### A few generations after
+
+
+https://user-images.githubusercontent.com/57909721/221156559-17dda8a0-479e-408f-ab17-b3ede70fe7da.mp4
+
+
+### Mechanics
+
+
+https://user-images.githubusercontent.com/57909721/221157183-5c3ab07f-14ad-4eb9-a4e6-bfed62e60cf0.mp4
+
