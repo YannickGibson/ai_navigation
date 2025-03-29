@@ -5,6 +5,19 @@ A simulation of a race game using natural selection algorithm *NeuroEvolution of
 
 The goal of an agent is to travel the most the distance in shortest amount of time in direction of a road without hitting the edges.
 
+
+## Demonstration
+### Learning
+
+https://user-images.githubusercontent.com/57909721/221156472-658bc087-ec96-46c6-9bbf-49ac21720dda.mp4
+
+### A few generations after
+
+
+https://user-images.githubusercontent.com/57909721/221156559-17dda8a0-479e-408f-ab17-b3ede70fe7da.mp4
+
+
+
 ## Instalation
 - Download or clone the repository
 - Navigate to the root of the repository
@@ -65,16 +78,6 @@ Program can be launched:
 
 ## Tests
 Unit-tests are checking the core functionality of the program, tests run on majority of functions and methods. Tests can be run with the `pytest` command.
-
-## Demonstration
-### Learning
-
-https://user-images.githubusercontent.com/57909721/221156472-658bc087-ec96-46c6-9bbf-49ac21720dda.mp4
-
-### A few generations after
-
-
-https://user-images.githubusercontent.com/57909721/221156559-17dda8a0-479e-408f-ab17-b3ede70fe7da.mp4
 
 
 ### Mechanics
