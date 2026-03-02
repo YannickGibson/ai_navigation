@@ -1,0 +1,57 @@
+[project]
+name = "ai-navigation"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "atomicwrites>=1.4.0",
+  "attrs>=21.4.0",
+  "colorama>=0.4.4",
+  "iniconfig>=1.1.1",
+  "neat-python>=0.92",
+  "packaging>=21.3",
+  "pluggy>=1.0.0",
+  "py>=1.11.0",
+  "pygame>=2.1.2",
+  "pyparsing>=3.0.8",
+  "pytest>=7.1.2",
+  "tomli>=2.0.1",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "pytest-cov",
+]
+lint = [
+  "ruff",
+  "mypy",
+  "pylint"
+]
+
+[tool.ruff.lint]
+extend-select = [
+  "ALL",
+  "F",        # Pyflakes rules
+  "W",        # PyCodeStyle warnings
+  "E",        # PyCodeStyle errors
+  "I",        # Sort imports properly
+  "UP",       # Warn if certain things can changed due to newer Python versions
+  "C4",       # Catch incorrect use of comprehensions, dict, list, etc
+  "FA",       # Enforce from __future__ import annotations
+  "ISC",      # Good use of string concatenation
+  "ICN",      # Use common import conventions
+  "RET",      # Good return practices
+  "TID",      # Some good import practices
+  "TC",       # Enforce importing certain types in a TYPE_CHECKING block
+  "TD",       # Be diligent with TODO comments
+  "NPY",      # Some numpy-specific things
+]
+
+[tool.ruff.lint.pylint]
+max-args = 10
+
+[tool.pytest.ini_options]
+# Suppress pygame's pkg_resources deprecation warning that appears in pytests (pygame 2.6.1 issue, not our code)
+filterwarnings = [
+    "ignore::UserWarning:pygame.pkgdata",
+]

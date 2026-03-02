@@ -1,9 +1,9 @@
 # AI Navigation
 
 ## Overview
-A simulation of a race game using natural selection algorithm *NeuroEvolution of Augmented Topologies*, **NEAT** in short.
+The project lets agents learn to drive through a race track using the natural selection algorithm [*NeuroEvolution of Augmented Topologies (NEAT)*](https://en.wikipedia.org/wiki/Neuroevolution_of_augmenting_topologies).
 
-The goal of an agent is to travel the most the distance in shortest amount of time in direction of a road without hitting the edges.
+The goal of an agent is to travel the most distance in the shortest amount of time without hitting the edges.
 
 
 ## Demonstration
@@ -19,41 +19,40 @@ https://user-images.githubusercontent.com/57909721/221156559-17dda8a0-479e-408f-
 
 
 ## Instalation
-- Download or clone the repository
-- Navigate to the root of the repository
-- Create and activate a virtual environment and install packages (see bellow)
+Create a virtual environment
 
-Linux
-```ps1
-virtualenv venv
+Using Anaconda
+```bash
+conda create -n ai-navigation
+conda activate ai-navigation
+pip install .
+```
+Using `virtualenv`
+```bash
+virtualenv venv`
 venv/bin/activate
-pip install -r .\requirements.txt
+pip install .
 ```
-Windows
-```ps1
-virtualenv venv
-venv\Scripts\activate.ps1
-pip install -r .\requirements.txt
-```
+
 
 
 ## Execution
-A user can freely control an unit if the program is run from `__main_movement__.py` else if the program is run from `__main_ai__.py` you need to make sure that the config value `let_me_drive` is set to  `True`
+To be able to control an agent in the interactive mode of the app (`interactive_training.py`), the value `let_me_drive` needs to be set to `True` (it is on by default). To test out the movement mechanics alone you can run the  `only_movement.py` file. 
   
-Run the program from the root directory, e.g.:
-```ps1
-python __main_ai__.py
+Run the a simulation using
+```bash
+python examples/interactive_training.py
+```
+or for movement only run the following
+```bash
+python examples/only_movement.py
 ```
 
 ## Controls
-User can control an unit with `WSAD` keys, it's meant only as a demonstration as to how it feels to be an agent.
+User can control his agent with `WSAD` keys, it is meant only as a demonstration as to how it feels to be an agent.
 To skip a generation you can press the `Del` button, meant to manualy speed up the natural selection process (bevare; the next generation is derived from the one that was terminated).
-
-Program can be launched:
-- as an AI simulation `__main_ai__.py`
-- as a movement simulation `__main_movement__.py`
   
-# AI Config 
+# Interactive Config 
 
 - *road_index*
         - index of road pre-saved as a `pickle` 
@@ -66,7 +65,7 @@ Program can be launched:
 - *show_parent* 
         - highlights most prominent genome (doesn't guarantee reproduction)
 - *save_best_genome* 
-        - saves the most prominent genome as a `pickle` to `utils/genomes` directory 
+        - saves the most prominent genome as a `pickle` to `data/genomes` directory 
 - *reverse_fitness_lines*
         - makes agents compete in the opposite direction 
 - *let_me_drive* 
@@ -77,7 +76,7 @@ Program can be launched:
         - determines after how many frames of agents not crossing *fitness lines* in the forward direction will the simulation start a new generation
 
 ## Tests
-Unit-tests are checking the core functionality of the program, tests run on majority of functions and methods. Tests can be run with the `pytest` command.
+Unit-tests are checking the core functionality of the program and run on majority of functions and methods. Tests can be run with the `pytest` command. Make sure you have the test option installed using `pip install .[test]`.
 
 
 ### Mechanics
