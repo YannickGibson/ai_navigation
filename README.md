@@ -29,7 +29,7 @@ pip install .
 ```
 Using `virtualenv`
 ```bash
-virtualenv venv`
+virtualenv venv
 venv/bin/activate
 pip install .
 ```
